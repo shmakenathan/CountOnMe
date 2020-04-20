@@ -11,9 +11,13 @@ import UIKit
 
 
 extension ViewController: CalculatorDelegate {
+    
+    
     func operationChanged(text: String) {
         textView.text = text
     }
+    
+   
 }
 
 
@@ -24,12 +28,13 @@ class ViewController: UIViewController {
     
     @IBOutlet weak var textView: UITextView!
     @IBOutlet var numberButtons: [UIButton]!
+
     
     // MARK: IBAction
     
     ///Displays numbers on screen
     @IBAction func tappedNumberButton(_ sender: UIButton) {
-        calculator.addNumber(number: String(sender.tag ))
+        calculator.addDigit(digit: sender.tag)
     }
     
     ///Reset fonction
@@ -39,37 +44,46 @@ class ViewController: UIViewController {
     
     ///Displays operand on screen
     @IBAction func tappedMathOperatorButton(_ sender: UIButton) {
-           guard calculator.canAddOperator else {
-               presentAlert(title: "Zéro!",message: "Un operateur est déja mis !")
-               return
-           }
-           calculator.addOperator(mathOperator: MathOperator.allCases[sender.tag-1])
+       do {
+            try calculator.addOperator(mathOperator: MathOperator.allCases[sender.tag - 1])
+        } catch {
+            handleError(error: error)
+        }
     }
     
     ///Show the result on the screen
     @IBAction func tappedEqualButton(_ sender: UIButton) {
-        guard calculator.expressionIsCorrect else {
-            presentAlert(title: "Zéro!",message: "Entrez une expression correcte !")
-            return
+        do {
+            try calculator.Equal()
+        } catch {
+            handleError(error: error)
         }
-        guard calculator.expressionHaveEnoughElement else {
-            presentAlert(title: "Zéro!",message: "Demmarrez un nouveau calcul !")
-            return
-        }
-        calculator.Equal()
     }
   
     // MARK: Methods - Internal
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-    }
     
     // MARK: Properties - Private
     
     private lazy var calculator = Calculator(delegate: self)
 
     // MARK: Methods - Private
+    
+    private func handleError(error: Error) {
+        guard let calculatorError = error as? CalculatorError else {
+            handlUnknownError(error: error)
+            return
+        }
+        handleCalculatorError(error: calculatorError)
+    }
+    
+    private func handleCalculatorError(error: CalculatorError) {
+        presentAlert(title: error.title, message: error.message)
+    }
+    
+    private func handlUnknownError(error: Error) {
+        presentAlert(title: "Unknown error", message: "An unknown error occured \(error.localizedDescription)")
+    }
+    
     
     ///Displays the alert with the desired message
     private func presentAlert(title: String, message: String){
@@ -79,5 +93,6 @@ class ViewController: UIViewController {
     }
     
 
+    
 }
 
