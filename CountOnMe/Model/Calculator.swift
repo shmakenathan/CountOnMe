@@ -27,6 +27,9 @@ class Calculator {
     // MARK: Methods - Internal
     
     func addOperator(mathOperator: MathOperator) throws {
+        if expressionHaveResult {
+            textToCompute = ""
+        }
         if elements.isEmpty && !mathOperator.isSignOperator {
             throw CalculatorError.expressionHaveNotEnoughElement
         }
@@ -64,6 +67,19 @@ class Calculator {
         textToCompute = ""
     }
     
+    func beginBySignOperator() -> [String] {
+        var myElements = elements
+        if isOperationElementEqualToMathOperator(operationElement: elements[0]) {
+            let myNewElement = myElements[0] + myElements[1]
+            myElements.remove(at: 0)
+            myElements.remove(at: 0)
+            myElements.insert(myNewElement, at: 0)
+            return myElements
+        }
+        return myElements
+    }
+    
+    
     ///Compute and return the result
     func Equal() throws {
         var result: Double
@@ -76,11 +92,11 @@ class Calculator {
         guard expressionHaveEnoughElement else {
             throw CalculatorError.expressionHaveNotEnoughElement
         }
-        
-        if elements.count > 3 {
-            elementsForOperation = try solvePriorityOperationsFrom(operationsElements: elements)
+        let myNewElements = beginBySignOperator()
+        if myNewElements.count > 3 {
+            elementsForOperation = try solvePriorityOperationsFrom(operationsElements: myNewElements)
         } else {
-            elementsForOperation = elements
+            elementsForOperation = myNewElements
         }
         
         
@@ -146,10 +162,6 @@ class Calculator {
         return elements.count >= 3
     }
     
-    var canAddOperator: Bool {
-        return isLastElementOperator
-    }
-    
     private var expressionHaveResult: Bool {
         return textToCompute.firstIndex(of: "=") != nil
     }
@@ -173,7 +185,7 @@ class Calculator {
     private func removed(tab : [String] , index : Int) -> [String] {
         var tableau = tab
         for _ in 0...2{
-            tableau.remove(at: (index - 1))
+            tableau.remove(at: (index))
         }
         return tableau
     }
