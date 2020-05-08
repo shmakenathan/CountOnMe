@@ -54,7 +54,7 @@ class ViewController: UIViewController {
     ///Show the result on the screen
     @IBAction func tappedEqualButton(_ sender: UIButton) {
         do {
-            try calculator.Equal()
+            try calculator.equal()
         } catch {
             handleError(error: error)
         }

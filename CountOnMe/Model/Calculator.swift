@@ -30,7 +30,7 @@ class Calculator {
         if expressionHaveResult {
             textToCompute = ""
         }
-        if elements.isEmpty && !mathOperator.isSignOperator {
+        if (elements.isEmpty && !mathOperator.isSignOperator) || (!elements.isEmpty && isOperationElementEqualToMathOperator(operationElement: elements[0]) && !mathOperator.isSignOperator && elements.count > 2) {
             throw CalculatorError.expressionHaveNotEnoughElement
         }
         
@@ -38,7 +38,7 @@ class Calculator {
         textToCompute.append(" \(mathOperator.rawValue) ")
     }
     
-    // texttocompute = 3 +
+    
     
     private func removePreviousOperatorIfNecessary() {
         
@@ -48,7 +48,7 @@ class Calculator {
             textToCompute.removeLast(3)
         }
     }
-    
+
     private func isOperationElementEqualToMathOperator(operationElement: String) -> Bool {
         for mathOperator in MathOperator.allCases where mathOperator.rawValue == operationElement {
             return true
@@ -59,6 +59,9 @@ class Calculator {
     func addDigit(digit: Int) {
         if expressionHaveResult {
             textToCompute = ""
+        }
+        if elements.count > 0 && elements.last == "0" {
+          textToCompute = String(textToCompute.dropLast(1))
         }
         textToCompute.append("\(digit)")
     }
@@ -81,7 +84,7 @@ class Calculator {
     
     
     ///Compute and return the result
-    func Equal() throws {
+    func equal() throws {
         var result: Double
         var elementsForOperation: [String]
         
@@ -130,7 +133,22 @@ class Calculator {
         }
         
         textToCompute.append(contentsOf: " = ")
-        textToCompute.append(elementsForOperation[0])
+        
+        let formattedResultString = try getFormattedResultFrom(elementsForOperation: elementsForOperation)
+    
+        textToCompute.append(formattedResultString)
+    }
+    
+    private func getFormattedResultFrom(elementsForOperation: [String]) throws -> String {
+        guard
+            let resultAsString = elementsForOperation.first,
+            let resultAsNumber = Double(resultAsString)
+            else { throw CalculatorError.resultIsInvalid }
+        
+        let resultAsNSNumber = NSNumber(value: resultAsNumber)
+        
+        guard let formattedResultString = numberFormatter.string(from: resultAsNSNumber) else { throw CalculatorError.resultConversionFailed }
+        return formattedResultString
     }
     
     // MARK: Properties - Private
@@ -140,6 +158,14 @@ class Calculator {
             delegate?.operationChanged(text: textToCompute)
         }
     }
+    
+    private let numberFormatter: NumberFormatter = {
+        let numberFormatter = NumberFormatter()
+        numberFormatter.alwaysShowsDecimalSeparator = false
+        numberFormatter.maximumFractionDigits = 4
+        return numberFormatter
+    }()
+    
     
     private var elements: [String] {
         return textToCompute.split(separator: " ").map { "\($0)" }
