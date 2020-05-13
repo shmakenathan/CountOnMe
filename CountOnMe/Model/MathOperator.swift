@@ -11,7 +11,6 @@ import Foundation
 enum MathOperator: String, CaseIterable {
     case plus = "+", minus = "-", divide = "÷", multiply = "×"
     
-    
     var isSignOperator: Bool {
         switch self {
         case .divide, .multiply: return false

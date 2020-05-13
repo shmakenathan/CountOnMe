@@ -8,28 +8,20 @@
 
 import UIKit
 
-
-
-extension ViewController: CalculatorDelegate {
-    
+extension CalculatorViewController: CalculatorDelegate {
     
     func operationChanged(text: String) {
         textView.text = text
     }
-    
-   
 }
 
-
-
-class ViewController: UIViewController {
+class CalculatorViewController: UIViewController {
     
     // MARK: IBOutlet
     
     @IBOutlet weak var textView: UITextView!
     @IBOutlet var numberButtons: [UIButton]!
 
-    
     // MARK: IBAction
     
     ///Displays numbers on screen
@@ -83,16 +75,12 @@ class ViewController: UIViewController {
     private func handlUnknownError(error: Error) {
         presentAlert(title: "Unknown error", message: "An unknown error occured \(error.localizedDescription)")
     }
-    
-    
+
     ///Displays the alert with the desired message
-    private func presentAlert(title: String, message: String){
+    private func presentAlert(title: String, message: String) {
         let alertVC = UIAlertController(title: title, message: message, preferredStyle: .alert)
         alertVC.addAction(UIAlertAction(title: "OK", style: .cancel, handler: nil))
         self.present(alertVC, animated: true, completion: nil)
     }
     
-
-    
 }
-

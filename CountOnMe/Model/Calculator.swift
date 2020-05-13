@@ -5,10 +5,10 @@
 //  Created by Nathan on 15/01/2020.
 //  Copyright © 2020 Vincent Saluzzo. All rights reserved.
 //
+//swiftlint:disable cyclomatic_complexity
+
 import Foundation
-
-
-protocol CalculatorDelegate {
+protocol CalculatorDelegate: AnyObject {
     func operationChanged(text: String)
 }
 
@@ -16,16 +16,15 @@ class Calculator {
     
     // MARK: Properties - Internal
     
-    var delegate: CalculatorDelegate?
-    
+    weak var delegate: CalculatorDelegate?
     
     init(delegate: CalculatorDelegate? = nil) {
         self.delegate = delegate
     }
     
-    
     // MARK: Methods - Internal
     
+    ///Add operator to compute
     func addOperator(mathOperator: MathOperator) throws {
         if expressionHaveResult {
             textToCompute = ""
@@ -38,50 +37,21 @@ class Calculator {
         textToCompute.append(" \(mathOperator.rawValue) ")
     }
     
-    
-    
-    private func removePreviousOperatorIfNecessary() {
-        
-        guard let operationElement = elements.last else { return }
-        
-        if isOperationElementEqualToMathOperator(operationElement: operationElement) {
-            textToCompute.removeLast(3)
-        }
-    }
-
-    private func isOperationElementEqualToMathOperator(operationElement: String) -> Bool {
-        for mathOperator in MathOperator.allCases where mathOperator.rawValue == operationElement {
-            return true
-        }
-        return false
-    }
-    
+    ///Add number to compute
     func addDigit(digit: Int) {
         if expressionHaveResult {
             textToCompute = ""
         }
-        if elements.count > 0 && elements.last == "0" {
+        if !elements.isEmpty && elements.last == "0" {
           textToCompute = String(textToCompute.dropLast(1))
         }
         textToCompute.append("\(digit)")
     }
     
+    ///Reset display
     func reset() {
         textToCompute = ""
     }
-    
-    func beginBySignOperator() -> [String] {
-        var myElements = elements
-        if isOperationElementEqualToMathOperator(operationElement: elements[0]) {
-            let myNewElement = myElements[0] + myElements[1]
-            myElements.remove(at: 0)
-            myElements.remove(at: 0)
-            myElements.insert(myNewElement, at: 0)
-            return myElements
-        }
-        return myElements
-    }
-    
     
     ///Compute and return the result
     func equal() throws {
@@ -102,7 +72,6 @@ class Calculator {
             elementsForOperation = myNewElements
         }
         
-        
         while elementsForOperation.count > 1 {
             guard
                 let left = convertStringToDouble(mystring: elementsForOperation[0]),
@@ -112,7 +81,6 @@ class Calculator {
             }
             
             let operand = elementsForOperation[1]
-            
             
             switch operand {
             case "+": result = left + right
@@ -139,21 +107,9 @@ class Calculator {
         textToCompute.append(formattedResultString)
     }
     
-    private func getFormattedResultFrom(elementsForOperation: [String]) throws -> String {
-        guard
-            let resultAsString = elementsForOperation.first,
-            let resultAsNumber = Double(resultAsString)
-            else { throw CalculatorError.resultIsInvalid }
-        
-        let resultAsNSNumber = NSNumber(value: resultAsNumber)
-        
-        guard let formattedResultString = numberFormatter.string(from: resultAsNSNumber) else { throw CalculatorError.resultConversionFailed }
-        return formattedResultString
-    }
-    
     // MARK: Properties - Private
     
-    var textToCompute : String = "" {
+    var textToCompute: String = "" {
         didSet {
             delegate?.operationChanged(text: textToCompute)
         }
@@ -165,7 +121,6 @@ class Calculator {
         numberFormatter.maximumFractionDigits = 4
         return numberFormatter
     }()
-    
     
     private var elements: [String] {
         return textToCompute.split(separator: " ").map { "\($0)" }
@@ -192,8 +147,37 @@ class Calculator {
         return textToCompute.firstIndex(of: "=") != nil
     }
     
-    
     // MARK: Methods - Private
+    
+    ///Delete operator if necessary
+    private func removePreviousOperatorIfNecessary() {
+           guard let operationElement = elements.last else { return }
+           if isOperationElementEqualToMathOperator(operationElement: operationElement) {
+               textToCompute.removeLast(3)
+           }
+        
+    }
+
+    ///Test if it's a sign operator
+    private func isOperationElementEqualToMathOperator(operationElement: String) -> Bool {
+           for mathOperator in MathOperator.allCases where mathOperator.rawValue == operationElement {
+               return true
+           }
+           return false
+    }
+    
+    ///Delete elements of Calcul
+    private func beginBySignOperator() -> [String] {
+        var myElements = elements
+        if isOperationElementEqualToMathOperator(operationElement: elements[0]) {
+            let myNewElement = myElements[0] + myElements[1]
+            myElements.remove(at: 0)
+            myElements.remove(at: 0)
+            myElements.insert(myNewElement, at: 0)
+            return myElements
+        }
+        return myElements
+    }
     
     ///Convert to String
     private func convertStringToDouble(mystring: String) -> Double? {
@@ -208,14 +192,28 @@ class Calculator {
     }
     
     ///Remove the 3 elements of an operation
-    private func removed(tab : [String] , index : Int) -> [String] {
+    private func removed(tab: [String], index: Int) -> [String] {
         var tableau = tab
-        for _ in 0...2{
+        for _ in 0...2 {
             tableau.remove(at: (index))
         }
         return tableau
     }
     
+    ///Returns the formatted result
+    private func getFormattedResultFrom(elementsForOperation: [String]) throws -> String {
+        guard
+            let resultAsString = elementsForOperation.first,
+            let resultAsNumber = Double(resultAsString)
+            else { throw CalculatorError.resultIsInvalid }
+        
+        let resultAsNSNumber = NSNumber(value: resultAsNumber)
+        
+        guard let formattedResultString = numberFormatter.string(from: resultAsNSNumber) else { throw CalculatorError.resultConversionFailed }
+        return formattedResultString
+    }
+    
+    ///Test if there are priorities
     private func containsPriority(operation: [String]) -> Bool {
         operation.contains("÷") || operation.contains("×")
     }
@@ -255,7 +253,7 @@ class Calculator {
     }
     
     ///allows to return which of the 2 symbols is first
-    private func getNextPriorityOperator(elements : [String]) -> String {
+    private func getNextPriorityOperator(elements: [String]) -> String {
         if elements.contains("÷") && elements.contains("×") {
             return elements[min(elements.firstIndex(of: "÷")!, elements.firstIndex(of: "×")!)]
         } else if elements.contains("÷") {
@@ -263,6 +261,5 @@ class Calculator {
         }
         return "×"
     }
-    
     
 }

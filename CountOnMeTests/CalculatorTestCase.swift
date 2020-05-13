@@ -5,13 +5,14 @@
 //  Created by Nathan on 07/04/2020.
 //  Copyright © 2020 Vincent Saluzzo. All rights reserved.
 //
-
+// swiftlint:disable force_try
+// swiftlint:disable force_cast
 import XCTest
 @testable import CountOnMe
 
 class CalculatorTestCase: XCTestCase {
     var calculator: Calculator!
-    let viewController = ViewController.self
+    let viewController = CalculatorViewController.self
     
     override func setUp() {
         super.setUp()
@@ -41,7 +42,7 @@ class CalculatorTestCase: XCTestCase {
         XCTAssertEqual(calculator.textToCompute, "")
     }
     
-    // MARK : addDigit
+    // MARK: addDigit
     
     func testGivenTextToComputeWithFullOperationResolved_WhenTapAddDigit_ThenTextToComputePrintThisNumber() {
         calculator.addDigit(digit: 3)
@@ -75,7 +76,6 @@ class CalculatorTestCase: XCTestCase {
         XCTAssertEqual(calculator.textToCompute, "6")
     }
     
-    
     // MARK: addOperator
     
     func testGivenEmptyOperation_WhenAddOperatorDigitAndMultiply_ThenGetResult() {
@@ -100,7 +100,6 @@ class CalculatorTestCase: XCTestCase {
         try! calculator.equal()
         try! calculator.addOperator(mathOperator: .plus)
         XCTAssertEqual(calculator.textToCompute, " + ")
-        
     }
     
     func testGivenEmptyOperation_WhenAddNotSignOperator_ThenThrowNotEnoughtElements() {
@@ -110,8 +109,6 @@ class CalculatorTestCase: XCTestCase {
                 let calculError = error as! CalculatorError
                 XCTAssertEqual(calculError, CalculatorError.expressionHaveNotEnoughElement)
         }
-        
-        
     }
     func testGivenEmptyOperation_WhenAddTwoConsecutivesOperator_ThenReplaceTheFirstByThSecond() {
         try! calculator.addOperator(mathOperator: .plus)
@@ -133,7 +130,7 @@ class CalculatorTestCase: XCTestCase {
         XCTAssertEqual(calculator.textToCompute, "5 × ")
     }
     
-    // MARK : equal
+    // MARK: equal
     
     func testGivenTextToComputeIsNotEmpty_WhenTapEqual_ThenTextToComputeIsTheResult() {
         
@@ -167,7 +164,6 @@ class CalculatorTestCase: XCTestCase {
         }
     }
     
-    
     func testGivenDivideByZeroWithMoreThreeElements_WhenTapEqual_ThenThrowCannotDivideByZero() {
         calculator.addDigit(digit: 5)
         try! calculator.addOperator(mathOperator: MathOperator.plus)
@@ -181,7 +177,6 @@ class CalculatorTestCase: XCTestCase {
                 XCTAssertEqual(calculError, CalculatorError.cannotDivideByZero)
         }
     }
-    
     
     func testGivenTextToComputeIsEmpty_WhenTapEqual_ThenThrowExpressionIsIncorrect() {
         XCTAssertThrowsError(
@@ -202,7 +197,6 @@ class CalculatorTestCase: XCTestCase {
         }
     }
     
-    
     func testGivenTextToComputeContainsPriority_WhenTapEqual_ThenTextToComputeIsTheResult() {
         
         calculator.addDigit(digit: 5)
@@ -221,11 +215,5 @@ class CalculatorTestCase: XCTestCase {
         try! calculator.equal()
         XCTAssertEqual(calculator.textToCompute, "5 + 5 - 5 × 5 + 5 ÷ 5 × 5 = -10")
     }
-    
-    
-    
-    
-    
-    
     
 }
