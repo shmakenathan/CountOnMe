@@ -13,6 +13,7 @@
 		1FA43BDA224E569A00F565CB /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1FA43BD9224E569A00F565CB /* Assets.xcassets */; };
 		1FA43BDD224E569A00F565CB /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1FA43BDB224E569A00F565CB /* LaunchScreen.storyboard */; };
 		D80933F323CF2C7400CC521C /* Calculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = D80933F223CF2C7400CC521C /* Calculator.swift */; };
+		D85B6E64246C61E1009E0D55 /* CalculatorDelegateMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = D85B6E63246C61E1009E0D55 /* CalculatorDelegateMock.swift */; };
 		D86FE91C243D010600AE8C79 /* CalculatorError.swift in Sources */ = {isa = PBXBuildFile; fileRef = D86FE91B243D010600AE8C79 /* CalculatorError.swift */; };
 		D86FE92E243D072000AE8C79 /* CalculatorTestCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = D86FE92D243D072000AE8C79 /* CalculatorTestCase.swift */; };
 		D8EAE4912422A53D00B7F920 /* MathOperator.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8EAE48F2422A42C00B7F920 /* MathOperator.swift */; };
@@ -37,6 +38,7 @@
 		1FA43BDC224E569A00F565CB /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		1FA43BDE224E569A00F565CB /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		D80933F223CF2C7400CC521C /* Calculator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Calculator.swift; sourceTree = "<group>"; };
+		D85B6E63246C61E1009E0D55 /* CalculatorDelegateMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalculatorDelegateMock.swift; sourceTree = "<group>"; };
 		D86FE91B243D010600AE8C79 /* CalculatorError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalculatorError.swift; sourceTree = "<group>"; };
 		D86FE923243D06AE00AE8C79 /* CountOnMeTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CountOnMeTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		D86FE927243D06AE00AE8C79 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -93,9 +95,18 @@
 			path = CountOnMe;
 			sourceTree = "<group>";
 		};
+		D85B6E62246C61C1009E0D55 /* Mocks */ = {
+			isa = PBXGroup;
+			children = (
+				D85B6E63246C61E1009E0D55 /* CalculatorDelegateMock.swift */,
+			);
+			path = Mocks;
+			sourceTree = "<group>";
+		};
 		D86FE924243D06AE00AE8C79 /* CountOnMeTests */ = {
 			isa = PBXGroup;
 			children = (
+				D85B6E62246C61C1009E0D55 /* Mocks */,
 				D86FE927243D06AE00AE8C79 /* Info.plist */,
 				D86FE92D243D072000AE8C79 /* CalculatorTestCase.swift */,
 			);
@@ -263,6 +274,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D85B6E64246C61E1009E0D55 /* CalculatorDelegateMock.swift in Sources */,
 				D86FE92E243D072000AE8C79 /* CalculatorTestCase.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

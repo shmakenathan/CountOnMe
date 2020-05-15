@@ -16,8 +16,6 @@ class Calculator {
     
     // MARK: Properties - Internal
     
-    weak var delegate: CalculatorDelegate?
-    
     init(delegate: CalculatorDelegate? = nil) {
         self.delegate = delegate
     }
@@ -29,7 +27,8 @@ class Calculator {
         if expressionHaveResult {
             textToCompute = ""
         }
-        if (elements.isEmpty && !mathOperator.isSignOperator) || (!elements.isEmpty && isOperationElementEqualToMathOperator(operationElement: elements[0]) && !mathOperator.isSignOperator && elements.count > 2) {
+        
+        if (elements.isEmpty && !mathOperator.isSignOperator) || (!elements.isEmpty && isOperationElementEqualToMathOperator(operationElement: elements[0]) && !mathOperator.isSignOperator && elements.count == 1) {
             throw CalculatorError.expressionHaveNotEnoughElement
         }
         
@@ -109,7 +108,9 @@ class Calculator {
     
     // MARK: Properties - Private
     
-    var textToCompute: String = "" {
+    private weak var delegate: CalculatorDelegate?
+    
+    private var textToCompute: String = "" {
         didSet {
             delegate?.operationChanged(text: textToCompute)
         }
@@ -160,7 +161,7 @@ class Calculator {
 
     ///Test if it's a sign operator
     private func isOperationElementEqualToMathOperator(operationElement: String) -> Bool {
-           for mathOperator in MathOperator.allCases where mathOperator.rawValue == operationElement {
+        for mathOperator in MathOperator.allCases where mathOperator.rawValue == operationElement {
                return true
            }
            return false
